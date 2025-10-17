@@ -22,7 +22,8 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
-class product(models.Model):
+
+class Product(models.Model):
     # კლასში უნდა შევქმნათ სვეტები, ისევე როგორც sql ბაზაში ვქმნიდით
     # განსხვავებით sql ბაზისა, არ გვჭირდება id ის გაწერა, რადგანაც ამას django ავტომატურად იზამს
     title = models.CharField(max_length=100)
@@ -48,7 +49,7 @@ class product(models.Model):
     # განსხვავება ისაა რომ, როდესაც დააიფდეითდება იმ თარითს შეინახავს და არა შექმის თარიღს
 
     # ამ მიდგომით შეგვიძლია ორი ცხრილი დავაკავშიროდთ ერთმანეთს, ისევე როგორც ვაკავშირედბით sql ბაზაში
-    categories = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    categories = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     # მონაცემთა ტიპში უნდა გავუწეროთ ForeignKey რომელსაც ფრჩხილებში უნდა მივუთითოთ მეორე ცხრილის სახელი და წაშლის შემთხვევაში რა მოხდეს
     # ForeignKey არის one to many კავშირი
 
@@ -59,7 +60,7 @@ class product(models.Model):
 # verbose_name_plural - გამოიყენება სვეტების სახელის ჩასაწერად admin ფეიჯზე,
 
     def __str__(self):
-        return self.title
+        return f"{self.title} - {self.price}"
     # str მეთოდს ვიყენებთ სვეტებში მონაცემების შეტანისას სახელით რომ გამოჩნდეს ეს მონაცემი და არა ობიექტის მისამართით
 
 
@@ -84,7 +85,6 @@ class product(models.Model):
 # შეგვიძლია თუკი გაშვებული მიგრაციისს უკან დაბრუნება გვსურს, მიგრაციის გაშვებისას დავუწეროთ ციფრი, რომელიც მიგრაციებს შემქნისას მოყვება და ისევ ამ მიგრაციაზე დაბრუნდება აპლიკაცია,
 # ამას ვიყენებთ იმ შემთხვევაში თუკი გაშვებული მიგრაცია არ მოგვწონს და ისევ უკან გვსურს დაბრუნება
 # ცვალდში შევინახოთ all იდან წამორებული მონაცემი და ამ ცვლადზე გადავიაროთ for ციკლით
-
 
 
 
