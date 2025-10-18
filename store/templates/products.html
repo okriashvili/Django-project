@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Products</title>
+</head>
+<body>
+    <h1>Hello from products page</h1>
+    <a href="{% url 'store:index' %}">Home page</a>
+    <br>
+    <a href="{% url 'store:about' %}">About page</a>
+    <hr>
+
+
+    <ul>
+    {% for product in products %}
+        <a href="{% url 'store:product_details' product.id %}">title: {{ product.title }} </a>
+        <li>price: {{ product.price }}$ </li>
+        <li>quantity: {{ product.quantity }} </li>
+        {% if product.is_active %}
+        <li>In stock: {{ product.is_active }}</li>
+        {% endif %}
+        <hr>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+
+
