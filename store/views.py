@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
-
 from store.models import Product, Category
+from store.forms import ProductForm
 
 
 # views.py ვწერთ ფუნქციების სახით ლოგიკებს რომლებიც მომხმარებლისთვის ვიზუალურად იქნება ხილული.
@@ -42,10 +42,10 @@ def products_json(request):
 
 # მაგრამ იმისათვის რომ ჩვენვე წამოვიღოთ ეს მონაცემი და ვიზუსლურად გამოვიტანოთ საიტზე, ამისათვის საჭიროა რომ contextით გავატანოთ ეს მონაცემი
 # contextში ის ცვლადი უნდა გავატანოთ რომელშიც ORMით წამოღებული მონაცემები გვაქვს შენახული, ხოლო უშუალოდ ამ მონაცემის გამოსახვა კი უნდა მოხდეს html დოკუმენტიდან jinjaს ენის საშუალებით
-def products(request):
-    all_product = Product.objects.all()
+def product_list(request):
+    all_product = Product.objects.all().select_related('categories')
+    total_products = all_product.count()
     return render(request, "products.html", {'products' : all_product})
-
 # <!--  იმისათვის რომ ბექიდან წამოღებული მონაცემი გამოვსახოთ ვიყენებთ ჯინჯას ენას, context ით გამოტანებული ცვლადის გამოსახვა შეგვიძლია {{ context_name }} ით,
 # მაგრამ გამოიტანს query_setს დიქტის სახით, იმისათვის რომ დალაგებული და ვიზუალურად გარჩევადი იყოს შეგვიძლია გადავიაროთ for ციკლით და სათითაოდ გამოვიტანოთ ისინი  -->
 # <!-- for ციკლიცთვის ან if ბლოკისათვის ვიყენებთ {% %} ფიგურული ფრჩხილები და პროცენტის ნიშანი შიგნით, ხოლო ცვლადის გამოსატანად კი უშუალოდ {{}} ორი ფიგურული ფრჩხილები  -->
@@ -68,6 +68,16 @@ def products(request):
 
 # product ისგან განსხვავებით აქ უნდა გავფილტროთ და მონაცემი ამოვიღოთ id ით და ეს id უნდა გავუტოლოთ ჩვენს მიერ გადაცემულ პარამეტრს,
 # რათა ეს წამოღებული id დაიჭიროს პარამეტრმა და ამ idის მონაცემი გამოვიტანოთ
+def add_product(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("store:product_list")
+    else:
+        form = ProductForm()
+    return render(request, "add_product.html", {'form' : form})
+
 
 def product_details(request, product_pk):
     product = get_object_or_404(Product, id=product_pk)

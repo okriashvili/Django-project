@@ -1,32 +1,23 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Products</title>
-</head>
-<body>
-    <h1>Hello from products page</h1>
-    <a href="{% url 'store:index' %}">Home page</a>
-    <br>
-    <a href="{% url 'store:about' %}">About page</a>
-    <hr>
+{% extends 'base.html' %} {# extends ბლოკი არ იხურება}
+{% block title %}Products{%endblock%}
 
+{% block content %}
+    <h1 class="mb-4">Hello from products page</h1>
 
-    <ul>
-    {% for product in products %}
-        <a href="{% url 'store:product_details' product.id %}">title: {{ product.title }} </a>
-        <li>price: {{ product.price }}$ </li>
-        <li>quantity: {{ product.quantity }} </li>
-        {% if product.is_active %}
-        <li>In stock: {{ product.is_active }}</li>
-        {% endif %}
-        <hr>
-    {% endfor %}
-    </ul>
-</body>
-</html>
+    <div class="row">
+        {% for product in products %}
+        <div class="card col-md-3 mb-3 ms-3">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <p class="card-text">{{ product.price }}</p>
+                <p class="card-text">{{ product.description }}</p>
+                <a href="{% url 'store:product_details' product.id %}" class="btn btn-primary">Click to see details</a>
+                <p>Category: {{ product.categories }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'store:add_product' %}" class="btn btn-secondary bg-success mt-4 w-25">Add product</a>
 
-
+{% endblock %}

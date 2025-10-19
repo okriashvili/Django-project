@@ -1,5 +1,5 @@
 from django.urls import path
-from store.views import index, about, products, products_json, product_details
+from store.views import index, about, product_list, products_json, product_details, add_product
 
 app_name = "store"
 
@@ -14,12 +14,14 @@ urlpatterns = [
     # თუკი routeს ცარიელს დავტოვებთ, მაშინ ენდფოინთის გამოძახების გარეშე გაეშვება ეს გვერდი
     # მარგამ მხოლოდ ერთხელ შეგვიძლია ენდფოინთის ცარეილი დატოვება
     path('about/', about, name='about'),
-
     path('products.json/', products_json, name='products_json'),
+    path('products/', product_list, name='product_list'),
+    path('products/<int:product_pk>/', product_details, name='product_details'),
+    path('add_product/', add_product, name='add_product'),
 
-    path('product', products, name='products'),
 
-    path('product/<int:product_pk>/', product_details, name='product_details'),
+
+
 # რადგანაც მეორე პარამეტრიც გადავეცით ფუნქციას, routeში ახალი path უნდა შევუქმნათ, აქ შემოდის ის რითიც უნდა დავიჭიროთ id,
 # თუკი მონაცემთა ბაზიდან წამოვა id 3, მაშინ აქ უნდა დაიჭიროს 3იანი, რის შემდეგაც გამოიტანს იმ მონაცემს რომლის ID იქნება 3
 

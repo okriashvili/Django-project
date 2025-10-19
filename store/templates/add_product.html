@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {# extends ბლოკი არ იხურება}
+{% block title %}Products{%endblock%}
+
+{% block content %}
+    <h1>Add new prooducts</h1>
+    <form method="post" class="mt-4 w-50">
+        {% csrf_token %}
+        {{ form }}
+
+        <button type="submit" class="bg-primary btn-secondary btn">Submit product</button>
+    </form>
+
+{% endblock %}
+
+{# იმისათვის რომ მომხამრებელს შეეძლოს პროდუქტის გერდზე ატვირთვა, ამისათვის უნდა გამოაგზავნოს post მოთხოვნა}

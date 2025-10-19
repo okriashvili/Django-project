@@ -1,15 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>home</title>
-</head>
-<body>
-    <h1>Hello from Home page</h1>
-    <a href="{% url 'store:about' %}">About Us</a>
-    <br>
-    <a href="{% url 'store:products' %}">Our Products</a>
+{% extends 'base.html' %} {# extends ბლოკი არ იხურება}
+{% block title %}Home{%endblock%}
 
-</body>
-</html>
+{% block content %}
+<h1>Hello from Home page</h1>
+
+{% endblock %}
