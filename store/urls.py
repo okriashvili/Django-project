@@ -1,6 +1,7 @@
 from django.urls import path
 from store.views import index, about, product_list, products_json, product_details, add_product
 
+
 app_name = "store"
 
 # ყველა ენდფოინთი urls.py გაწერის ნაცვლად უმჯობესია თითოეულ აპლიკაციას შიგნითვე შევუქმნათ urls ფაილი
