@@ -10,22 +10,17 @@
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{ product.title }}</h5>
-                <p class="card-text">{{ product.description }}</p>
+                <p class="card-text">description: {{ product.description }}</p>
+                <p class="card-text">quantity: {{ object.quantity}}</p>
+                <p class="card-text">In stock: {{object.is_active}}</p>
                 <a href="{% url 'store:product_list' %}">Back to Products</a>
-                <p class="card-text">{{ product.price }}</p>
+                <p class="card-text">{{ product.price }}$</p>
             </div>
         </div>
     </div>
-
-
-
-
-
-<!--        <li>Price: {{ product.price }}$ </li>-->
-<!--        <li>Description: {{ product.description }}</li>-->
-<!--        <li>Quantity: {{ product.quantity }} </li>-->
-<!--        <li>Stock: {{ product.is_active }} </li>-->
-
-
-
+    <a href="{% url 'store:update_product' object.pk %}" class="btn btn-secondary bg-success mt-4 w-25">Update product</a>
+    <form action="{% url 'store:delete_product' object.pk %}" method="post" onsubmit="return confirm('Confirm to Delete product')">
+        {% csrf_token %}
+        <button class="btn btn-secondary bg-danger mt-4 w-25">Delete product</button>
+    </form>
 {% endblock %}

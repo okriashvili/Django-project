@@ -20,7 +20,6 @@ from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
 # პირველრგიში სანად pathში შევუქმნით ენდფოინთს და გავუწერთ ფუქნციას, ეს ფუქნციები უნდა დავაიმპორტოთ
-from store.views import index, about
 
 
 

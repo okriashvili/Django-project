@@ -4,4 +4,12 @@
 
 {% block content %}
     <h1>Hello from about page</h1>
+    <p>{{ last_five_product }}</p>
+    <ul>
+    {% for product in all_products %}
+        <li>
+        {{ product }}
+        </li>
+    {% endfor %}
+    </ul>
 {% endblock %}

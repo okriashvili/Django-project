@@ -1,15 +1,20 @@
 {% extends 'base.html' %} {# extends ბლოკი არ იხურება}
+{% load crispy_forms_filters %}
 {% block title %}Products{%endblock%}
 
 {% block content %}
     <h1>Add new prooducts</h1>
-    <form method="post" class="mt-4 w-50">
+    <form method="post" class="mt-4 w-50" style="margin: 0 auto;">
         {% csrf_token %}
-        {{ form }}
-
-        <button type="submit" class="bg-primary btn-secondary btn">Submit product</button>
+        {{ form|crispy }}
+        <button type="submit" class="bg-primary btn-secondary btn mb-5 mt-3" style="text-align: center;" >Add product</button>
     </form>
 
 {% endblock %}
 
-{# იმისათვის რომ მომხამრებელს შეეძლოს პროდუქტის გერდზე ატვირთვა, ამისათვის უნდა გამოაგზავნოს post მოთხოვნა}
+{# იმისათვის რომ მომხამრებელს შეეძლოს პროდუქტის გერდზე ატვირთვა, ამისათვის უნდა გამოაგზავნოს post მოთხოვნა #}
+
+
+{# შექმნილი ფორმებისთვის სტილების მისანიჭებლად ვიყენებთ crispy bootstrap მოდელს, დაინსტალირების შემდეგ უნდა შევცვალოთ settings.py ფაილიდან უნდა შემოვიყვანოთ #}
+{# აგრეთვე html ფაილში უნდა დავალოადოთ(ჩავტვირთოთ {% load cripy_forms_filters %} ჯინჯას2 ის ენით უნდა ჩამოვტვირთოთ) უშუალოდ form ცვლადთან უნდა შემოვიღოთ ეს ფილტრაცია #}
+{# | სწორ ხაზს ვიყენებთ ფილტრაციისათვის #}

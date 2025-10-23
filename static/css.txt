@@ -1,0 +1,7 @@
+css ფაილების შემოსატანად, საჭიროა რომ მთავარ djangoს პროექტში შევქმნათ static ფოლდერი, რომელშიც უნდა ჩავსვათ css ფაილები,
+ამ ფაილების დასაკავშირებლად კი settings.pyში staticში უნდა დავამატოთ: >>
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles' ეს ორი ცვლადი
+
+შემდგომ base.html ფაილში უნდა დავალოადოთ {% load static %} და head ნაწილში უნდა დავლინკოთ,
+დალინკვა კი ხდება jinja2ის გამოყენებით urlში უნდა გავუწეროთ {% folder_name 'ფაილის მისამართი, folder_nameდან ფაილამდე ' %}

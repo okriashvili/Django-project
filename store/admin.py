@@ -8,9 +8,59 @@ from django.contrib import admin
 # მთელი საიტის მართვააა შესაძლებელი
 # მომხმარებლისთვის თანამშრომის სტატუსის / სუპეროუზერის სტატუსის მინიჭება / დაბლოკვა და ა შ.
 
-# from models import product, Category
 
 from store.models import Category, Product
+
+
+# admin.site.register([Category, Product])
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['title', 'price', 'quantity', 'categories', 'is_active', 'created_at']
+    # list_dispay, ვიზუალურად გამოიტანს ყველა იმ მონაცემს რომელსაც ლისტის სახით გავუწერთ
+
+    list_filter = ['created_at']
+    # ფილტრაციას გააკეთებს, და ჩამონათვალლის გვერდით ცლკე გრაფაში გამოიტანს შედეგს
+
+    list_display_links = ['title']
+    # adminის გვერდმა კონკრეტული პროდუქტის გვერდზე გადასასვლელად რომელი მონაცემი გამოიყენოს,
+
+    list_editable = ['price', 'quantity', 'categories', 'is_active']
+    # რომელ სვეტსაც გადავცემთ იმ მონაცემის შეცვლა შეგვეძლება ისე რომ კონკრეტული მონაცემის გვერდზე არ გადავიდეთ
+    actions = ['set_product_available', 'set_product_unavailable', 'set_product_discounted', 'set_FTU_discounted']
+
+# Actions / ქმედებები - წინასწარ განსაზღვრული ფუნქცია, რომელიც საშუალებას გვაძლევს რომ გავაკეთოთ ცვლილებები
+# დეფაულტად მოყვება წაშლის ქმედება, მაგრამ შეგვიძლია ჩვენივე ქმედება შევქმნათ და ის განახორციელოს
+# ამისათვის უნდა შევქმნათ ფუნქცია და დავადოთ დეკორატორი, რასაც დეკორატორს გავუწერთ ის გახდება ქმედების დასახელება
+    @admin.action(description='Set product available')
+    # დეკორატორი უნდა დავადოთ  ფუქნციას თავზე
+    def set_product_available(self, request, queryset):
+        # ფუნქციას უნდა გადავცეთ self, request და queryset, query სეტს უდა გადავცეთ მეთოდი, ეს queryset იქონიებს გავლენას მონაცემეზე
+        queryset.update(is_active=True)
+    # ფრჩხილებში კი უნდა გადავცეთ თუკი რა ოპერაცია უნდა განახორციელოს
+    # როდესაც შევქმნით ფუნქციას, ეს ფუნქცია უნდა ჩავსვათ ჩვენს კლასში საიდანაც მონაცემებს ვემუშავებით
+
+    @admin.action(description='Set product unavailable')
+    def set_product_unavailable(self, request, queryset):
+        queryset.update(is_active=False)
+        queryset.save()
+
+    @admin.action(description='Set product discounted')
+    def set_product_discounted(self, request, queryset):
+        for product in queryset:
+            product.price = int(product.price) * 0.80
+            # რადგანაც product.price არის ათწილადი, გამრავლებით ვერ გაამრავლებს, ამიტომ ჯერ უნდა გადავიყვანოთ მთელ რიცხვში და შემდეგ გადავამრავლოთ
+            product.save()
+
+
+    @admin.action(description='Set discount for FTU')
+    def set_FTU_discounted(self, request, queryset):
+        for p in queryset:
+            p.price = int(p.price) * 0.60
+            p.save()
+
+
+
+
 # models ფაილიდან დავაიმპორტეთ product და Category
 # მაგრამ იმისათვის რომ admin გვერდზე გამოჩნდეს ვიყენებთ
 # admin.site.register() - ფრჩხილებში ვუწერთ ცვლადის სახელს სადაც მონაცემებია შენახული
@@ -18,7 +68,7 @@ from store.models import Category, Product
         # admin.site.register(Category)
 # adminდან ვიძახებთ siteს და შემდეგ register
 # ან შეგვიძლია ერთხელ გამოვიძახოთ და ლისტში ჩავსვათ
-admin.site.register([Product, Category])
+# admin.site.register([Product, Category])
 
 # მას შემდეგ რაც ცვლადებს და მონაცემებს ავსახავთ admin გვერდზე, modelsფაილში, meta კლასში შეგვიძლია მივუთითოთ მონაცემის ცვალდის დასახელებაც>>>
 # ამისათვის ვიყენებთ - verbal_name_plural='column_name' ამ ცვლადში გაწერილი სახელი აისახება admin ის გვერდზე
@@ -165,8 +215,8 @@ admin.site.register([Product, Category])
 # თუკი ფილტრაციას არ გამოვიყენებთ მაშინ ყველა მონაცემზე გააკეთებს წვდომას:
 # მაგ:
 # tech_product.filter(price__gte=1500).update(description='lenovo laptops, 16GB RAM, 256GB storage')
-# update მთლიანად გაანახლებს მონაცემს, წინას წაშლის და ახალი გადაეწერება 
-# იმისათვის რომ წინა მონაცემი არ წაშალოს და ახალი გადააწეროს ძველს შეგვიძლია 
+# update მთლიანად გაანახლებს მონაცემს, წინას წაშლის და ახალი გადაეწერება
+# იმისათვის რომ წინა მონაცემი არ წაშალოს და ახალი გადააწეროს ძველს შეგვიძლია
 # for ციკლი გადავიაროთ და დავასელექთოთ მონაცემი > შევინახოთ ცვლადში ცრილის ის სვეტი რომლის განახლებაც გვინდა > ცვლადში მოვახდინოთ მოდიფიკაციები >
 # შემდგომ პირიქით ცხრილის სვეტი გავუტოლოთ ამ ცვლადს > და ბოლოს ეს ცვლადი დავასეივოთ
 #  for product in tech_product.filter(price__gte=1500):
@@ -204,6 +254,29 @@ admin.site.register([Product, Category])
 # მონაცემების დალაგება: order_by() ფრჩხილებში უნდა გადავცეთ სვეტის დასახელება, თუკი მხოლოდ სვეტს გადავცემთ მაშინ ზრდადობით დაალაგებს
 # თუ გინდა რომ კლებადობის მიხედვით დაალაგოს მაშინ სცეტის დასახელების წინ უნდა დავუწეროთ მინუს (-) ნიშანი
 # print(all_product.order_by('-price'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# actions / მოქმედებების შექმნა admin დან
+# adminის გვერდზე მონაცემების გამოტანის ერთ-ერთი გზა არის admin.site.register([]) და ფრჩხილებში ლისტის სახით  გადავცეთ მონაცემებიდან წამოღებული ცხრიების დასახელება
+# აგრეთვე შეგვიძლია კლასები შევქმნათ და იქიდან მივწვდეთ მონაცემებს
+
+# კლასი უნდა იყოს adminიდან ModelAdmin ის შვილობილი კლასი
+# იმისათვის რომ მივახვედროთ რომელ მოდელებს ემუშავოს, დეკორატორის სახით უნდა გადავცეთ კო კრეტული მოდელი რომელსაც უნდა ემუშავოოს
 
 
 

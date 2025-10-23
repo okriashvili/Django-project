@@ -3,5 +3,11 @@
 
 {% block content %}
 <h1>Hello from Home page</h1>
-
+<ul>
+{% for product in last_five_products %}
+    <li>
+    {{ product }}
+    </li>
+{% endfor %}
+</ul>
 {% endblock %}

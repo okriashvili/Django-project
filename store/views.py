@@ -2,6 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from store.models import Product, Category
 from store.forms import ProductForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.urls import reverse_lazy
+
+# ListView - გამოიყენება მონაცემების სიის გამოსატანად
+# DetailView - გამოიყენება მონაცემების დეტალების გამოსატანად
+# CreateView - გამოიყენება მონაცემების დასამატებლად
 
 
 # views.py ვწერთ ფუნქციების სახით ლოგიკებს რომლებიც მომხმარებლისთვის ვიზუალურად იქნება ხილული.
@@ -19,14 +25,39 @@ from store.forms import ProductForm
 # მაგრამ ის მიგდომა რომ html კოდი httpresponseში დავწეროთ არის არასწორია
 # ამიტომ შეგვიძლია ცალკე html კოდი დავწეროთ და უშუალოდ ეს კოდი დავარენდეროთ ფუნქციაში,
 # ამისათვის ვიყენებთ დაიმპორტებულ render და არა httpresponse
-def index(request):
-    # მსგავსად httpresponseისა, უნდა გადავცეთ request პარამეტრი,
-    return render(request, "index.html")
-# ხოლო renderს კი უნდა დავაბრუნებინოთ request და html ფაილი,
-# ამისათვის, აუცილებლად უნდა შევქმნათ template საქაღალდე, რომელშიც უნდა შევინახოთ html ფაილები, საქაღალდეს აუცილებლად უნდა დავარქვათ templates
+# def index(request):
+#     # მსგავსად httpresponseისა, უნდა გადავცეთ request პარამეტრი,
+#     return render(request, "index.html")
+# # ხოლო renderს კი უნდა დავაბრუნებინოთ request და html ფაილი,
+# # ამისათვის, აუცილებლად უნდა შევქმნათ template საქაღალდე, რომელშიც უნდა შევინახოთ html ფაილები, საქაღალდეს აუცილებლად უნდა დავარქვათ templates
 
-def about(request):
-    return render(request, "about.html")
+class HomeView(TemplateView):
+    template_name = 'index.html'
+
+
+
+    # def about(request):
+            # return render(request, "about.html")
+# ხოლო, შეგვიძლია about გვერდიც ისევე ავაწყოთ როგორც IndexView
+    # class AboutView(TemplateView):
+    #     template_name = 'about.html'
+# მაგრამ, შეგვიძლია კლასი არ შევქმმნათ და უშუალოდ urlsში დავაიმპორტოთ TemplateView, და TemplateView.as_view()ს ფრჩხილებში გადავცეთ
+# template_name='about.html', ფრჩხილებში უნდა გადავცეთ ის template რაც უნდა დაამუშავოს
+# უშუალოდ pathშივე უნდა გავუწეროთ
+
+
+# index და aboutის შემთხვევაში, რომელიც მონაცემებს არ ემუშავება და მხოლოდ კონკრეტული ფაილი გამოაქვს
+# შეგვიძლია გამოვიყენოთ TemplateView
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -42,14 +73,186 @@ def products_json(request):
 
 # მაგრამ იმისათვის რომ ჩვენვე წამოვიღოთ ეს მონაცემი და ვიზუსლურად გამოვიტანოთ საიტზე, ამისათვის საჭიროა რომ contextით გავატანოთ ეს მონაცემი
 # contextში ის ცვლადი უნდა გავატანოთ რომელშიც ORMით წამოღებული მონაცემები გვაქვს შენახული, ხოლო უშუალოდ ამ მონაცემის გამოსახვა კი უნდა მოხდეს html დოკუმენტიდან jinjaს ენის საშუალებით
-def product_list(request):
-    all_product = Product.objects.all().select_related('categories')
-    total_products = all_product.count()
-    return render(request, "products.html", {'products' : all_product})
+        # def product_list(request):
+        #     all_product = Product.objects.all().select_related('categories').order_by('-created_at')
+        #     total_products = all_product.count()
+        #     return render(request, "products.html", {'products' : all_product})
 # <!--  იმისათვის რომ ბექიდან წამოღებული მონაცემი გამოვსახოთ ვიყენებთ ჯინჯას ენას, context ით გამოტანებული ცვლადის გამოსახვა შეგვიძლია {{ context_name }} ით,
 # მაგრამ გამოიტანს query_setს დიქტის სახით, იმისათვის რომ დალაგებული და ვიზუალურად გარჩევადი იყოს შეგვიძლია გადავიაროთ for ციკლით და სათითაოდ გამოვიტანოთ ისინი  -->
 # <!-- for ციკლიცთვის ან if ბლოკისათვის ვიყენებთ {% %} ფიგურული ფრჩხილები და პროცენტის ნიშანი შიგნით, ხოლო ცვლადის გამოსატანად კი უშუალოდ {{}} ორი ფიგურული ფრჩხილები  -->
 # შეგვიძლია forიდან ამოღებულ მონაცემების ატრიბუტებიც გამოვიტანოთ მხოლოდ
+
+
+
+
+# როგორც ვიცით viewsში ფუნქციებში იწერება ლოგიკები, რომელიც ვიზუალურაად გამოიტანს ფაილებში დაწერილ დოკუმენტაციას
+# მაგრამ, გარდა ფუნქციებისა შეგვიძლია კლასებშიც გავწეროთ ეს ლოგიკები, რასაც პროგრამირებაში ვუწოდებთ classed_based_view CBV
+# ეს CBV ჩაშენებულია djangoში, რომელის შესაძლებლობები შეგვიძლია გამოვიყენოთ ჩვენს მიერ შექმნილ viewში
+# ჯერ უნდა დავაიმპორტოთ viewები from django.views.generic import Views
+# productეის გვერდი გადავაკეთოთ CBVად
+class ProductListView(ListView):
+    # model ში უნდა გადავცეთ იმ მოდელის/ცხრილის დასახელება რომელიც უნდა გამოსახოს, რომელი მოდელიდანაც გვინდა მონაცემის წამოღება
+    model = Product
+
+    # template_nameს უნდა გადავცეთ html ის ფაილი, რომელშიც უნდა გამოსახოს ეს მონაცემი
+    template_name = "products.html"
+
+    # context_objects_name როგორც ფუნქციაში ვაბრუნებინებდით კონტექსტის სახით მონაცემებს, რომელსაც შემდგომ ვიყენებდით მონაცეების გამოსასახად, მსგავსად
+    context_object_name = "products"
+    # დეფაულტად context_object_name დააბრუნდეს იმ მოდელის ყველა პროდუქციას, რომლსაც model = ში გადავცემთ
+    # ამის ფუნქციონალი გაწერილი აქვს მშობელ კლასში / ან შეგვიძლია context_processorsში გავატანოთ მონაცემი
+    # იმ შემთხვევაში თუკი, კლასიდან გადავატნთ მონაცემს და არა context_processorsდან, მაშინ მოთხოვნების შესამცირებლად querysetში უნდა გავიწეროთ select_related()
+    queryset = Product.objects.all().select_related('categories')
+    # პირდაპირ select_raletedს ვერ მოვდებთ, ჯერ წვდომა უნდა განვახორციელოთ Productზე და მერე მოვდოთ
+
+    # იმ შემთხვევაში თუკი კლასსს ერთზე მეტი მოდელი უნდა გავატანოთ,
+    # მაგ: კლასს productების გარდა უნდა გავატანოთ ბოლოს დამატებული 5 პროდუქცია, ამისათვის ვიყენებთ არა context_objects_manager არამედ ვიყენებთ მეთოდს def context_data
+    def get_context_data(self, **kwargs):
+        # მეთოდმა ჯერ მშობლის მონაცემები უნდა წამოიღოს, და შემდეგ გადავუტვირთოთ
+        context = super().get_context_data(**kwargs)
+        # superით უნდა გამოვიძახოთ მშობლის მეთოდი და გადავტვირტოთ
+
+        # ისევ context უნდა გადავტვირთოთ,1: ჯერ ცვლადს უნდა გავუწეროთ პირდაპირ context სახელი, რომელსაც კონტრქსტით გატანს და უშუალოდ ამას გამოვიყენებთ html კოდში
+        # 2: context უნდა გადავტვირთოთ და ახალი მონაცემი გავატანოთ
+        context['last_five_product'] = self.queryset.order_by('-created_at')[:5]
+        context['count'] = self.queryset.count()
+        # ყოველი ახალი მონაცემის გამოსატანად, contextს უნდა გავუწეროთ ['context_name']  = ახალი მონაცემის წამოღება
+        # ბოლოს კკი context უნდა დავაბრუნოთ
+        return context
+
+
+    # ordering = გადაეცემა მნიშვნელობა, რომლის მიხედვითაც დაალაგებს ჩვენს მონაცემეს, შეგვიძლია გადავცეთ ფასი, სახელი, შექმნის დრო, ხელმისაწვდომობა და ა შ.
+    # ordering = ['-created_at']
+
+# მას შემდეგ რაც ავაწყობთ CBVს, urlsშიც უნდა შევუცვალოთ პარამეტრები, კონკრეტულად ფუნქციიდან უნდა გადავაკეთოთ კლასად და pathში კლასი უნდა გავუწეროთ
+# მაგრამ pathში პირდაპირ კლასს ვერ გავუწერთ, არამედ კლასი უნდა გამოვიძახოთ, ბოლოში უნდა გავუწეროთ class_name.as_view() - as_view() უნდა გავუწეროთ
+
+
+
+
+# მონაცემის დამატება:
+# def add_product(request):
+#     if request.method == "POST":
+#         form = ProductForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("store:product_list")
+#     else:
+#         form = ProductForm()
+#     return render(request, "add_product.html", {'form' : form})
+
+
+# გადავტვირთოთ add_productიც classებად
+class ProductCreateView(CreateView):
+    model = Product
+    template_name = "add_product.html"
+    # განსხვავებით ფუნქციისა არაა საჭირო გავუწეროთ if ბლოკი, requestის ფრომა და ა შ
+
+    # მარტივად უნდა გადავცეთ ფორმის კლასი
+    form_class = ProductForm
+
+    # მონაცემის დამატების შემთხვევაში რომელ გვერდზე გადაგვიყვანოს, აწ ვუწერთ ენდფოინთის დასახელებას
+    def get_success_url(self, **kwargs):
+        return reverse_lazy("store:product_details", kwargs={'product_pk': self.object.pk})
+
+
+
+
+# # მონაცემის აფდეითი
+# def update_product(request, product_pk):
+#     # ჯერ უნდა წამოვიღოთ, ის მონაცემი რომლის აფდეითიც გვინდა, ამისათვისაც pkის ვიყენებთ
+#     product = get_object_or_404(Product, pk=product_pk)
+# # პდორიქტის დამატების მსგავსად, აქაც უნდა წამოვიდეს post მეთოდი
+#     if request.method == "POST":
+#         # როდესაც წამოვა post მეთოდი მაშინ დააბურნოს productForm(რომელიც შევქმნეით ფორმებში) > request.POSTიდან წამოღებული მონაცემი
+#         # და პლიუს უნდა დავამატოთ instance=product დასახელებული არგუმენტი
+#         # როდესაც ეს მოთხოვნა წამოვა, instance=product ამოიღებს პროდუქციის მთელ ინფორმაციას რომელიც ადრე შევავსეთ, და შეგვეძლება უშუალოდ ამ მონაცემების შეცვლა,
+#         # რათა თავიდან არ მოგვიწიოს ყველა ველის შეცვლა, მხოლოდ იმ სვეტს შევცვლით რომელიც გვინდა
+#         form = ProductForm(request.POST, instance=product)
+#         # როდესაც from ამოიღებს productს, უდა გავატართ ისევ ვალიდაციის ლოდიკა
+#         if form.is_valid():
+#             form.save()
+#             # redirect ში იწერება ლოგიკა, რომლითაც როდესაც მოხდება მონაცემის დააფდეითება ან დამატება, რომელ გვერდზე დაგვაბრუნოს ამ ოპერაციის შემდეგ
+#             # როგორც ჯინჯაში ისე ვუწერთ აქაც მისამართს, მაგრამ თუკი კონკრეტულ გვერდს ესაჭიროება pkიც,
+#             # მაშინ უნდა გავუწეროთ რომ product_pk იყოს ის ცვლადი რომლითაც ვიღებთ ამ კონკრეტული გვერდისთვის pk ის
+#             return redirect("store:product_details", product_pk=product_pk)
+#     else:
+#         form = ProductForm(instance=product)
+#         # elseში fromს ისევ უნდა გადავცეთ ProductForm(instance=product), რათა ცარიელი ფორმის ნაცვლად დააბრუნოს ის ფორმა რომელიც წაიღო დასააფდეითებლად, მაგრამ ვერ დააფდეითა
+#     return render(request, "update_product.html", {'form' : form})
+#     # საბოლოოოდ კი ისევ ვარენდერებთ ფუნქციას
+
+# აფდეითის შემდეგ პროდუქტს დაალაგებს იმის მიხედვით თუკი რომელი პროდუქტი შემოვიდა ბოლოს, ამიტომაც დააფდეითებულ პროდუქციას ბოლოში ჩააგდებს,
+# ამისათვის გავქვს შემდეგი მიდგომა რომ, იმ ცვლადში რომელშიც ვიღებთ პროდუქციას, ბოლოს მოვდოთ .order_by(' ') მეთოდი,
+# ფრჩხილებში კი დალაგების ლოდიკა უნდა გადავცეთ, რომელიც გავიარეთ shellში
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    template_name = "update_product.html"
+    form_class = ProductForm
+
+    # updateის შემთხვევაში სჭირდება pk_urls_kwarg, რათა დავიჭიროთ მონაცემი კონკრეტული აიდის მიხედვით და ეს კონკრეტული მონაცემი დავააფდეითოთ
+    pk_url_kwarg = 'product_pk'
+
+    # აფდეითის შემდეგ, უნდა გადაგვამისამართოს ამ პროდუქტის დეტალურ გვერდზე მაგრამ დეტალურ გვერდს სჭირდება ამ პროდუქტის აიდი,
+    # რათა კონკრეტულ პროდუქტის დეტალიურ გვერდზე გადავიდეთ
+    # ამ შემთხვევაში success_url უნდა გადავუტვიირთოთ მეთოდი, რადგანაც უშუალოდ success_urlს ვერ გადავცემთ კონკრეტული პროდუქტის აიდის
+    # success_url = '/products/'
+    # შეგვიძლია redirect გამოიყენოთ და გადავცეთ დეტალური გვერდის მისამართი და product_pk,
+    # success_url = redirect('store:product_details', product_pk = 1)
+    # მაგრამ პარამეტრად product_pk ვერ გავუტლოებთ უშუალოდ დააფდეითებული მონაცემის აიდის, ფუნქციისგან განსხვავებით ამ მონაცემის აიდი არ შემოგვაქვს
+
+    # ამიტომაც უნდა გადავუტვირთოთ success_url
+    def get_success_url(self, **kwargs):
+        # გადატვირთვისას უნდა დავაბრუნებინოთ reverse_laze, რომელიც ჯერ უნდა დავაიიმპორტოთ from django.urls import reverse_lazy
+        return reverse_lazy ("store:product_details", kwargs={'product_pk': self.object.pk})
+        # reverse_lazy()-ს
+        # 1:ჯერ უნდა გავუწეროთ იმ html ფაილი მისამართი, რომელზეც უნდა გადაგვამისამართოს
+        # ამ შემთხვევაში "store:product_details", შემდეგ>>>
+        # 2: რადგანაც სჭირდება ამ მონაცეკონკრეტული მონაცემის აიდი, უნდა გავუწეროთ kwargsში რომ
+        # 'product_pk' იყო ამ ობიექტის pk, ანუ: pk_url_kwargში გადაცემული product_pk გახდეს, იმ პროდუქტის pk რომელსაც ვააფდეითებთ
+
+# გადავწეროთ მონაცემის განახლების ლოგიკაც კლასზე
+
+
+
+
+
+# # წაშლა
+# def delete_product(request, product_pk):
+#     # წაშლის შემთხვევაშიც კონკრეტული პროდუქტის აიდით გვჭირდება მონაცემის ამოღება,
+#     product = get_object_or_404(Product, pk=product_pk)
+#     # აქაც ისევ უნდა შემოვიდეს POST მოთხოვნა
+#     if request.method == "POST":
+#         # პირდაპი უნდა მოვდოთ delete() მეთოდი
+#         product.delete()
+#         return redirect("store:product_list")
+#     # წაშლის შემთხვევაში არ ვარენდერებთ პროდუქციია, არამედ ვუწერთ redirect, გადამისამართებას
+#     # რადგანაც მონაცემს ვშლით, მომხმარებელი უნდა გადამისამართდეს სხვა გვერდზე
+#     return redirect(request, "products.html", {'product' : product})
+# შედარებიტ განსხვავებულია წაშლის ლოდიკა, ამ შემტხვევაში არ გვჭირდება ახალი html დოკუმენტაცია,
+# არამედ შეგვიძლია მხოლოდ ღილაკი შევქმნათ მონაცემის წასაშლელად,
+# ამისათვის ისევ ვქმნით urls ისევე რათა ავამუშავოთ ის ფუქნცია რომელიც უნდა გამოვიყენოთ წასაშლელად
+# ხოლო html ფაილში უნდა შევქმნათ formით ღილაკი, რათა post მეთოდი გავუშვათ
+# ისევ ვიყენებთ {% csrf_token %} რათა გაეშვას ჩვენი ფორმა
+# ხოლო urls ლინკი რომლელზეც უნდა დასაბმითდეს, უნდა გავუწეროთ action="{% ურლ %}" ში ჯინჯას ენით{%%}
+# იმისათვის რომ ეს submit ღილაკი ამუშავდეს, უნდა გავუწეროთ რომელ ლინკზე უნდა გაიგზავნოს, რომელიც შევქმენით urls.pyში
+
+# formს შეგვიძლია გავუწეროთ on_submit("return confirm('')") - რომელიც გააკეთებს რომ როდესაც გავუშვებთ წაშლის ფუნქციას,
+# ამოგვიგდებს პატარა ფანჯარას რომელში უნდა დავადასტუროთ რომ გვსურს თუ არა ნამდვილად წაშლა
+# დადასტურების შემთხვევაში გაეშვება და წაიშლება, ხოლო დაქენსელების შემთხვევაში ფუნქცია შეწყვეტს მუშაობას
+
+# გადვწეროთ წაშლის ფუნქციაც კლასად
+class ProductDeleteView(DeleteView):
+    # წასაშლელად დაგვჭირდება მხოლოდ model, რომელ მოდელს ემუშავოს კლასი
+    model = Product
+
+    # pk_url_kwarg რათა კონკრეტული მონაცემი ამოვიღოთ
+    pk_url_kwarg = 'product_pk'
+
+    # ბოლოს იმ გვერდის მისაამრთი, სადაც უნდა დაბრუნდეს წაშლის დროს
+    success_url = "/products/"
+
 
 
 
@@ -68,40 +271,44 @@ def product_list(request):
 
 # product ისგან განსხვავებით აქ უნდა გავფილტროთ და მონაცემი ამოვიღოთ id ით და ეს id უნდა გავუტოლოთ ჩვენს მიერ გადაცემულ პარამეტრს,
 # რათა ეს წამოღებული id დაიჭიროს პარამეტრმა და ამ idის მონაცემი გამოვიტანოთ
-def add_product(request):
-    if request.method == "POST":
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("store:product_list")
-    else:
-        form = ProductForm()
-    return render(request, "add_product.html", {'form' : form})
-
-
-def product_details(request, product_pk):
-    product = get_object_or_404(Product, id=product_pk)
-    return render(request, "product_details.html", {'product' : product})
-# მას შემდეგ რაც ფუქნციას ავაწყობთ, უნდა შევქმნათ url >>> url.py ფეიჯი
+        # def product_details(request, product_pk):
+        #     product = get_object_or_404(Product, id=product_pk)
+        #     return render(request, "product_details.html", {'product' : product})
 
 
 
-# get_object_404 ვიყენებთ იმისათვის რომ პროდუქტის არ ქონის შემთხვევაში ერორზე არ გავიდეს საიტი და მომხმარებელს გამოუტანოს რომ პროდუქტი არ არსებობს
-# ამისათვის მონაცემის ბაზიდან წამოღებისას get_object_404 უნდა გადავცეთ:
-# 1: რა კლასიც გვინდა, ამ შემთხვევაში product რომელიც მოგვაქვს ბაზიდან და
-# 2: მეორე პარამეტრად უნდა გადავცეთ id გავიტოლოთ მეორე პარამეტრს
+# გადავაკეთოთ product_details კლასად, ამისათვის ვიყენებთ DetailViewს, ჩვენი კლასი უნდა გავხადოთ DetailViewს შვილობილი
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = "product_details.html"
+    # მაგრამ რადგანაც product_detailზე კონკრეტული პროდიქტის აიდით გადავყავართ და აქ არ გვაქვს გაწერილი რომ ეს აიდი ამოიღოს
+    # ამ შემთხვევაში ეს გვერდი დაერორდება, ამიტომაც ვიყენებთ pk_url_kwargს და მნიშვნელობად უნდა გადავცეთ product_pk
+    # pk_url_kwarg = "product_pk"
+    # დეფაულტად pk_url_kwarg მნიშვნელობად აქვს pk
+    # თუკი არ გინდა რომ pk_url_kwarg გადავუტვირთოთ და დავტოვოთ, მაშინ urlში > pathში > routeში უნდა გავუწეროთ რომ მიიღებს ენდოფოინთში მიიღებს არა  product_pkს არამედ pk
+    pk_url_kwarg = "product_pk"
+
+
+
+    # მიუხედავად იმისა რომ html ში კონტექსტით არ ვატანთ წამოღებულ მონაცემებს, html ფაილი კონტექსტის სახელად იყეებს {{ product }}
+    # ესეც, ჩაშენებულია DetailViewში, რომ თუკი კლასს არ გავუწერთ context_object_nameს,
+    # კლასი modelში გადაცემულ მნიშვნელობას გამოიყენებს context_nameდ, პატარა რეესტრში გადმოიყვანს და იმას გამოიყენებს,
+    # ან მიუხედავად იმისა context_object_name გადავუტვირთავთ თუ არა, დეფაულტად djangoს უწერია რომ შეგვიძლია გამოვიყენოთ object context_nameად მაინც იმუშავებს
+    context_object_name = "product"
+0
 
 
 
 
 
 
-# იმისათვის რომ თითოეული პროდუქტის მონაცემი დავაკავშიროთ საიტს, ისევ jinjaს ენას ვიყენებთ, მაგრამ urlში nameსთან ერთად უნდა გადავცეთ პარამეტრი რომ ონაცემის id იყოს შენი აიდი
-# {% url 'store:product_details' product.id %}
-# რადგანაც ამ ფუნქციას მეორე პარამეტრიც სწირდება id ის სახით, უნდა გავუწეროთ რომ nameთან ერთად,
-# ფუნქციას მეორე პარამეტრად გადაეცი შემივე აიდი რითიც ფუნქცია გაეშვება
-# {% url 'store:product_details' product.id %}
-# ამისათვის nameს შემდეგ შეგვიძლია დავუწეროთ ფუნქციის პარამეტრის სახელი გავუტოლოთ product.id ის ან მხოლოდ product.id გავუწეროთ
-# ორივე შემთხვევაში იმუშავებს
+
+
+
+
+
+
+
+
 
 
