@@ -64,6 +64,7 @@ INSTALLED_APPS = [
 
     # ჩვენი აპლიკაცია
     'store',
+    'user',
 
     # დაიმპორტებული debug-toolbar ის აპლიკაცია
     'debug_toolbar',

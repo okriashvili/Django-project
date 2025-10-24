@@ -41,6 +41,8 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls', namespace='store')),
+    path('user/', include('user.urls', namespace='user')),
+
 # თუკი route ში დავტოვებთ ცარიელს სტრინგს, მაშინ აპლიკაციაში გადასვლა არ მოგვიწევს ენდფოინთების გამოსაძახებლად
 # მაგრამ თუკი მეორე აპლიკაციასაც შევქმნით და დავამატებთ, მაშინ ორიცე ცარიელი არ უნდა დავტოვოთ, წინააღმდეგ შემთხვევაში წაიკითხავს იმას რომელიც პირველი წერია
 ] + debug_toolbar_urls()
