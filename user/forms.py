@@ -38,7 +38,7 @@ class CustomUserCreationForm(UserCreationForm):
     phone = forms.CharField(required=False)
     address = forms.CharField(max_length=100)
     first_name = forms.CharField(required=False)
-    Last_name = forms.CharField(required=False)
+    # Last_name = forms.CharField(required=False)
 
     # ამის შემდეგ უნდა დავამატოთ ახალი ფილდები და meta კლასში გადავტვირთოთ filds
     # fileds გავატანოთ ახალი ფილდი

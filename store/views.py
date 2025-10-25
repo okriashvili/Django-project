@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from store.models import Product, Category
@@ -144,7 +145,7 @@ class ProductListView(ListView):
 
 
 # გადავტვირთოთ add_productიც classებად
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     template_name = "add_product.html"
     # განსხვავებით ფუნქციისა არაა საჭირო გავუწეროთ if ბლოკი, requestის ფრომა და ა შ
@@ -155,6 +156,17 @@ class ProductCreateView(CreateView):
     # მონაცემის დამატების შემთხვევაში რომელ გვერდზე გადაგვიყვანოს, აწ ვუწერთ ენდფოინთის დასახელებას
     def get_success_url(self, **kwargs):
         return reverse_lazy("store:product_details", kwargs={'product_pk': self.object.pk})
+
+    # თუკი მომხმარებელი არ არის დალოგინებული მაშინ გადაიყვანოს login ფეიჯზე
+    login_url = 'user:login'
+
+# LoginRequiredMixin გამოიყენება იმისათვის რომ, კონკრეტული მოქმედების შესრულება შეეძლოს იმ მომხმარებლებს რომლებიც არიან დალოგინებულები
+# ოღონდ ჯერ უნდა დავაიმპორტოთ - from django.contrib.auth.mixins import LoginRequiredMixin
+
+# ამის ვალიდაციას აკეთებს, თუკი მომხმარებელი არ არის დალოგინებული, არ შეეძლება კონკრეტული მოქმედების შესრულება და უნდა გადაამისამართებს რეგისტრაციის ან ლოგინის გვერდზე
+# გადამისამართებას კი ვაკეთებთ login_url ით და reverse_lazy ან პირდაპირ იმ გვერდის url სადაც უნდა გადამისამართდეს
+
+
 
 
 
