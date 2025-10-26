@@ -53,6 +53,19 @@ class Product(models.Model):
     # მონაცემთა ტიპში უნდა გავუწეროთ ForeignKey რომელსაც ფრჩხილებში უნდა მივუთითოთ მეორე ცხრილის სახელი და წაშლის შემთხვევაში რა მოხდეს
     # ForeignKey არის one to many კავშირი
 
+    image = models.ImageField(upload_to='product_images', null=True, blank=True, default="no_image.jpg")
+
+    # views მოდელს ვოყენებთ იმისათვის რომ დავიჭიროთ პროდუქტების ნახვის მაჩვენებელიც, რამდენად ხშირად არის კონკრეტული პროდუქტი ნანახი
+    # ამისათვის ვქმნით views რომელიც უნდა იყოს აუცილებლად დადებით რიცხვი, ხოლო იმისათვის რომ ადმინს არ შეეძლოს ამის ხელოვნურად შეცვლა,
+    # შეგვიძლია admin.pyდან read_onlyში დავამატოთ views და ამ მონაცემის ნახვა შეეძლება მხოლოდ,
+    views = models.PositiveIntegerField(default=0)
+    # ხოლო, ნახვები ავტომატურად რომ გაიზარდოს უნდა გამოვიყენოთ middleware, ლოგიკის ასაწყობად ვიყენებთ middleware.pyს,
+    # ხოლო ამ ლოგიკის ასამუშავებლად settings.pyში უნდა დავამატოთ middlewareს ლისტში
+
+
+
+
+
     class Meta:
         db_table = "product"
         verbose_name_plural = "Products"

@@ -19,6 +19,9 @@ from tkinter.font import names
 from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf import settings
+from django.conf.urls.static import static
+
 # პირველრგიში სანად pathში შევუქმნით ენდფოინთს და გავუწერთ ფუქნციას, ეს ფუქნციები უნდა დავაიმპორტოთ
 
 
@@ -48,3 +51,6 @@ urlpatterns = [
 ] + debug_toolbar_urls()
 # აპლიკაციის ენდფოინთები გავწერეთ უშუალოდ აპლიკაციაშივე შექმნილ urls ფაილში რომელსაც ვიძახებთ includeდან
 # ხოლო იმისათვის რომ ამ ენდფოინთებზე შევიდეთ, ჯერ უნდა შევიდეთ უშუალოდ აპლიკაციაში და შემდეგ შევიდეთ აპლიკაციის ენდფოინთებზე
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

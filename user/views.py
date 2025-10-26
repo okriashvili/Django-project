@@ -53,7 +53,7 @@ class UserRegistrationView(CreateView):
 # ამისათვის შეგვიძლია form_saveს commit გავუხადოთ False
     def form_valid(self, form):
         # user ის მოანცემების შეყვანისას, მას შემდეგ რა ფრომას დავასეივებთ, ეგრევე არ დაკომიტდეს
-        user = form.save(commit=False)
+        response = super().form_valid(form)
 
         # user.is_active ფილდი დეფაულტად არის True, მაგრამ შევიცვალეთ Falseით
         # is_active მიანიჭებს მომხმარებელს უფლებას აქტიურია თუ არა
@@ -62,14 +62,14 @@ class UserRegistrationView(CreateView):
         # user.is_superuser - მიანიჭებს სუპერმომხმარებლის უფლებას
         # მაგრამ ამისათვის user.is_staffიც უნდა ჩავურთოთ Trueზე
 
-        user.is_staff = True
+        # user.is_staff = True
         # IS_STAFF კი თანამშრომლის სტატისს მიანიჭებს
 
         # ამის სემდეგ დავასეივეთ user ის
-        user.save()
+
 
         # ბოლოში კი დავაბრუნოთ form_valid(form) და გადავცეთ form, რომელიც გააკეთებს იმას რაც ზემოთ გვიწერია
-        return super().form_valid(form)
+        return response
 # ამ შემთხვევაში როდესაც მომხმარებელი დარეგისტრირდება, user ის ფორმა დასეივდება როგორც, userს არ ექნება უფლება საიტზე წვდომა განახორციელოს
 # is_activeც ჩაშეებულია djangoში რომელიც მომხმარებელს აძლევს წვდომას საიტზე, ამის გათიშვის შემთხვევაში კი საიტზე ვეღარ შევა
 

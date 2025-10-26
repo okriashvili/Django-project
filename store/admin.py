@@ -12,6 +12,7 @@ from django.contrib import admin
 from store.models import Category, Product
 
 
+
 # admin.site.register([Category, Product])
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -26,7 +27,11 @@ class ProductAdmin(admin.ModelAdmin):
 
     list_editable = ['price', 'quantity', 'categories', 'is_active']
     # რომელ სვეტსაც გადავცემთ იმ მონაცემის შეცვლა შეგვეძლება ისე რომ კონკრეტული მონაცემის გვერდზე არ გადავიდეთ
-    actions = ['set_product_available', 'set_product_unavailable', 'set_product_discounted', 'set_FTU_discounted']
+
+    readonly_fields = ['views']
+
+
+    actions = ['add_image', 'set_product_available', 'set_product_unavailable', 'set_product_discounted', 'set_FTU_discounted']
 
 # Actions / ქმედებები - წინასწარ განსაზღვრული ფუნქცია, რომელიც საშუალებას გვაძლევს რომ გავაკეთოთ ცვლილებები
 # დეფაულტად მოყვება წაშლის ქმედება, მაგრამ შეგვიძლია ჩვენივე ქმედება შევქმნათ და ის განახორციელოს
@@ -57,6 +62,8 @@ class ProductAdmin(admin.ModelAdmin):
         for p in queryset:
             p.price = int(p.price) * 0.60
             p.save()
+
+
 
 
 

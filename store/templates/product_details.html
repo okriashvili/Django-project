@@ -7,7 +7,9 @@
     <h2>Products full information</h2>
     <div class="row container">
         <div class="card col-md-4" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
+             {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="...">
+            {% endif %}
             <div class="card-body">
                 <h5 class="card-title">{{ product.title }}</h5>
                 <p class="card-text">description: {{ product.description }}</p>

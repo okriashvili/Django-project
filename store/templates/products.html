@@ -5,10 +5,12 @@
     <h1 class="mb-4">Hello from products page</h1>
     <div class="row">
         {% for product in products %}
-        <div class="card col-md-3 mb-4 ms-5">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.title }}</h5>
+        <div class="card col-md-3 mb-4 ms-5 h-100" style="height:100px">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="..." style="height:150px">
+            {% endif %}
+            <div class="card-body" style="height:250px">
+                <h5 class="card-title fs-6 bg-primary">{{ product.title }}</h5>
                 <p class="card-text">{{ product.price }}</p>
                 <p class="card-text">{{ product.description }}</p>
                 <a href="{% url 'store:product_details' product.id %}" class="btn btn-primary">Click to see details</a>
@@ -17,6 +19,58 @@
         </div>
         {% endfor %}
     </div>
+    <hr>
     <a href="{% url 'store:add_product'  %}" class="btn btn-secondary bg-success mt-4 w-25">Add product</a>
     <h2>total_product: {{ count }}</h2>
+
+
+
+<!-- პაგინაციის გვერდი-->
+    <hr>
+    {{ paginator.page_range }}
+<!--პირველ რიგში უნდა შევამოქმოთ რომ თუ პაგინაცია შექმნილია მაშინ გამოიტანოს პაგინაციის გვრდი-->
+    {% if is_paginated %}
+    <nav aria-label="..." class="d-flex justify-content-center">
+      <ul class="pagination">
+<!-- პაგინაციის ფუნქციონალური გვერდები რომ ავაწყოთ უნდა გავუწეროთ მათი მისამართების ენდფოინთები -->
+<!-- პირველ გვერდს შეგვიძლია მანუალურად გავუწეროთ რომ იყოს პირველი გვერდი განსხვავებით ბოლოსგან -->
+
+<!-- წინა გვერდზე რომ გადავიდეთ, ამის შესაქმნელად შეგვიძლია გავუწეროთ რომ ?page= უდრიდეს, წინა გვერდს,
+ამისათვის ვიყენებთ page_obj.previous_page_number, ოღონდ ეს უნდა ჩავსვათ ჯინჯას სინტაქსში, მაგრამ როგორ ვიცით თუკი გვერდს არ ექნება წინა ან შემდეგი გვწერდი,
+მაშინ გავაერორზე, ამისათვის უნდა გამოვიყენოთ if ბლოკი და გავაკეთოთ ვალიდაცია, თუ გვერს აქვს წინა გვერდი მაშინ გაუშვას ბლოკში არსებული html დოკუმენტაცია -->
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1" aria-label="Previous">&laquo; First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev...</a></li>
+        {% else %}
+            <li class="page-item disabled"><a class="page-link">&laquo; First</a></li>
+            <li class="page-item disabled"><a class="page-link">Prev...</a></li>
+        {% endif %}
+
+        <!-- ხოლო შუაში არსებულ გვერდებზე გადასასვლელად გვჭირდება რომ for ციკლით გადავიაროთ pageებზე -->
+        {% for page in paginator.page_range %}
+        <!-- ეს გამოგვიტანს ყველა იმ გვერდების რაოდენობას, რამდენი გვერდიც გვაქვს -->
+        <!-- აქ კი შეგვიძლია, რომ ის გვერდი რომელზეც ვართ გამოკვეთილად გამოვაჩინოთ, ამისათვის ისევ უნდა გამოვიყენოთ if ბლოკი, რომ num უნ და უდრიდეს  -->
+            {% if page == page_obj.number %}
+                <li class="page-item active"><a class="page-link" aria-current="page">{{ page }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" aria-current="page" href="?page={{ page }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+
+<!-- რადგანაც არ ვიცით რამდენი გვერდი შეიძლება გვქონდეს, ამიტომ შეგვიძლია გავუწეროთ რომ ბოლო გვერდი იყო რამდენი გვერდიც გვაქვს იმდენი ციფრი, მაგ თუკი გაიზარდა ფეიჯების გვერდი მაშინ ბოლო გვერდის ციფრის შეიცვლება -->
+<!-- როგორც previous გვერდს გავუკეთეთ ვალიდაცია ისევე უნდა გავუკეთოთ nextსაც, მაგრამ უნდა გამოვიყენოთ next და არა previous -->
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}" aria-label="Previous">Last &raquo;</a></li>
+          {% else %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            <li class="page-item disabled"><a class="page-link">Last &raquo;</a></li>
+          {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+
+
 {% endblock %}

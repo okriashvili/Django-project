@@ -89,6 +89,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'store.middlewares.ProductCountMiddleware',
 ]
 
 ROOT_URLCONF = 'first_django_project.urls'
@@ -173,6 +174,12 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+# სურათებისათვის მათავარი საქაღალდე გახდეს media
+MEDIA_URL = 'media/'
+# სურატების წამოსარებად, ჯერ უნდა მიაკითხოს და შეინახოს mediaს საქაღალდეში
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
